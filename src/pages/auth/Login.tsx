@@ -1,9 +1,66 @@
+import React from "react";
+import {
+  FormControl,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
+  TextField,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import messagePopup from "../../services/message-popup";
+import BackdropLoader from "../../services/loader";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [values, setValues] = React.useState({
+    email: "",
+    password: "",
+    showPassword: false,
+  });
+  const [loading, setLoading] = React.useState(false);
+
+  const handleLoginClick = async (e: any) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await fetch("https://fakestoreapi.com/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          username: values.email,
+          password: values.password,
+        }),
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          return res.json();
+        }
+      });
+      setLoading(false);
+      if (response && response.token) {
+        localStorage.setItem("token", response.token);
+        window.location.reload();
+      } else {
+        messagePopup("", "Login failed", "error");
+      }
+    } catch (error: any) {
+      setLoading(false);
+      messagePopup("", error.message, "error");
+    }
+  };
   return (
-    <section className="vh-100" style={{ backgroundColor: "#9A616D" }}>
+    <section className="vh-100">
+      <BackdropLoader open={loading} />
       <div className="container py-5 h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col col-xl-10">
@@ -20,42 +77,79 @@ export default function Login() {
                 <div className="col-md-6 col-lg-7 d-flex align-items-center">
                   <div className="card-body p-4 p-lg-5 text-black">
                     <form style={{ padding: "0 60px" }}>
-                      <div className="d-flex align-items-center mb-3 pb-1">
-                        <i
-                          className="fas fa-cubes fa-2x me-3"
-                          style={{ color: "#ff6219" }}
-                        ></i>
-                        <span className="h1 fw-bold mb-0">Logo</span>
-                      </div>
-                      <h5
-                        className="fw-normal mb-3 pb-3"
-                        style={{ letterSpacing: "1px" }}
+                      <div
+                        className="align-items-center mb-3 pb-1"
+                        style={{ textAlign: "center" }}
                       >
-                        Sign into your account
-                      </h5>
+                        <div>
+                          <img
+                            className="rounded-circle"
+                            style={{ width: "70px" }}
+                            alt="avatar1"
+                            src="https://mdbcdn.b-cdn.net/img/new/avatars/9.webp"
+                          />
+                        </div>
+                        <p className="h3 fw-bold mb-0">App Name</p>
+                        <p className="mb-0">
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry. Lorem Ipsum has been the
+                        </p>
+                      </div>
 
                       <div className="form-group mb-4">
-                        <input
-                          type="email"
-                          className="form-control"
-                          id="exampleInputEmail1"
-                          aria-describedby="emailHelp"
-                          placeholder="Enter email"
-                        />
-                        {/* <small id="emailHelp" className="form-text text-muted">
-                          We'll never share your email with anyone else.
-                        </small> */}
+                        <FormControl fullWidth variant="standard">
+                          <InputLabel htmlFor="standard-email">
+                            Email
+                          </InputLabel>
+                          <Input
+                            id="standard-email"
+                            type="text"
+                            value={values.email || ""}
+                            onChange={(e) => {
+                              setValues((prevVal: any) => ({
+                                ...prevVal,
+                                email: e.target.value,
+                              }));
+                            }}
+                          />
+                        </FormControl>
                       </div>
                       <div className="form-group mb-4">
-                        <input
-                          type="password"
-                          className="form-control"
-                          id="exampleInputPassword1"
-                          placeholder="Password"
-                        />
-                        <span className="input-group-text">
-                          <i className="fa fa-eye" id="togglePassword"></i>
-                        </span>{" "}
+                        <FormControl fullWidth variant="standard">
+                          <InputLabel htmlFor="standard-adornment-password">
+                            Password
+                          </InputLabel>
+                          <Input
+                            id="standard-adornment-password"
+                            type={values.showPassword ? "text" : "password"}
+                            value={values.password || ""}
+                            onChange={(e) => {
+                              setValues((prevVal: any) => ({
+                                ...prevVal,
+                                password: e.target.value,
+                              }));
+                            }}
+                            endAdornment={
+                              <InputAdornment position="end">
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={() => {
+                                    setValues((prevVal: any) => ({
+                                      ...prevVal,
+                                      showPassword: !prevVal.showPassword,
+                                    }));
+                                  }}
+                                >
+                                  {values.showPassword ? (
+                                    <VisibilityOff />
+                                  ) : (
+                                    <Visibility />
+                                  )}
+                                </IconButton>
+                              </InputAdornment>
+                            }
+                          />
+                        </FormControl>
                       </div>
 
                       <div className="mb-4">
@@ -63,6 +157,7 @@ export default function Login() {
                           type="submit"
                           className="btn btn-primary"
                           style={{ width: "100%" }}
+                          onClick={handleLoginClick}
                         >
                           Login
                         </button>
