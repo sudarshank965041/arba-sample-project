@@ -5,19 +5,18 @@ import {
   Input,
   InputAdornment,
   InputLabel,
-  TextField,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import messagePopup from "../../services/message-popup";
-import BackdropLoader from "../../services/loader";
+import BackdropLoader from "../../components/loader";
 
 export default function Login() {
   const navigate = useNavigate();
   const [values, setValues] = React.useState({
-    email: "",
+    username: "",
     password: "",
     showPassword: false,
   });
@@ -30,7 +29,7 @@ export default function Login() {
       const response = await fetch("https://fakestoreapi.com/auth/login", {
         method: "POST",
         body: JSON.stringify({
-          username: values.email,
+          username: values.username,
           password: values.password,
         }),
         mode: "cors",
@@ -84,9 +83,9 @@ export default function Login() {
                         <div>
                           <img
                             className="rounded-circle"
-                            style={{ width: "70px" }}
+                            style={{ width: "70px", height: "70px" }}
                             alt="avatar1"
-                            src="https://mdbcdn.b-cdn.net/img/new/avatars/9.webp"
+                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
                           />
                         </div>
                         <p className="h3 fw-bold mb-0">App Name</p>
@@ -98,17 +97,17 @@ export default function Login() {
 
                       <div className="form-group mb-4">
                         <FormControl fullWidth variant="standard">
-                          <InputLabel htmlFor="standard-email">
-                            Email
+                          <InputLabel htmlFor="standard-username">
+                            Username
                           </InputLabel>
                           <Input
-                            id="standard-email"
+                            id="standard-username"
                             type="text"
-                            value={values.email || ""}
+                            value={values.username || ""}
                             onChange={(e) => {
                               setValues((prevVal: any) => ({
                                 ...prevVal,
-                                email: e.target.value,
+                                username: e.target.value,
                               }));
                             }}
                           />
