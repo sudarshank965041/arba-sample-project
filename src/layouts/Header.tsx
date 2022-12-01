@@ -10,8 +10,11 @@ import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Header() {
+  const { carts } = useSelector((state: any) => state.cartItems);
+  const [total, setTotal] = React.useState(0);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
   const handleProfileMenuOpen = (event: any) => {
@@ -27,6 +30,18 @@ export default function Header() {
     localStorage.clear();
     window.location.reload();
   };
+
+  React.useEffect(() => {
+    if (carts && Object.entries(carts).length) {
+      let count = 0;
+      for (const key in carts) {
+        if (Object.prototype.hasOwnProperty.call(carts, key)) {
+          count += +carts[key];
+        }
+      }
+      setTotal(count);
+    }
+  }, [carts]);
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -62,7 +77,7 @@ export default function Header() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="fixed" component="nav">
         <Toolbar>
           <Typography
             variant="h6"
@@ -76,8 +91,13 @@ export default function Header() {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { md: "flex" } }}>
-            <IconButton size="large" aria-label="cart counts" color="inherit">
-              <Badge badgeContent={4} color="error">
+            <IconButton
+              size="large"
+              aria-label="cart counts"
+              color="inherit"
+              onClick={() => navigate("/carts")}
+            >
+              <Badge badgeContent={total} color="error">
                 <ShoppingCartIcon />
               </Badge>
             </IconButton>

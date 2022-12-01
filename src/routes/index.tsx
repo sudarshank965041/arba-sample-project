@@ -3,8 +3,10 @@ import NoMatch from "../components/NoMatch";
 import Header from "../layouts/Header";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import Carts from "../pages/dashboard/Carts";
 import CodeChallenge from "../pages/dashboard/CodeChallenge";
 import Dashboard from "../pages/dashboard/Dashboard";
+import Products from "../pages/dashboard/Products";
 import Profile from "../pages/dashboard/Profile";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
@@ -52,6 +54,24 @@ export default function index() {
           <ProtectedRoute>
             <Header />
             <CodeChallenge />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="products"
+        element={
+          <ProtectedRoute>
+            <Header />
+            <Products />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="carts"
+        element={
+          <ProtectedRoute>
+            <Header />
+            <Carts />
           </ProtectedRoute>
         }
       />

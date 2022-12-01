@@ -8,10 +8,19 @@ import Typography from "@mui/material/Typography";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCartStart, removeFormCartStart } from "../redux/cartItems";
 
 export default function ProductCard(props: any) {
-  console.log(props);
+  const dispatch = useDispatch();
+  const { carts } = useSelector((state: any) => state.cartItems);
+  const handleAddProduct = (productId: number) => {    
+    dispatch(addToCartStart({ productId }));
+  };
 
+  const handleRemoveProduct = (productId: number) => {
+    dispatch(removeFormCartStart({ productId }));
+  };
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -36,14 +45,28 @@ export default function ProductCard(props: any) {
         </Typography>
       </CardContent>
       <CardActions>
-        {/* <Button variant="contained" fullWidth size="large">
-          Add to cart
-        </Button> */}
-        <ButtonGroup variant="contained" size="large" fullWidth>
-          <Button endIcon={<RemoveIcon />}></Button>
-          <Button>1</Button>
-          <Button startIcon={<AddIcon />}></Button>
-        </ButtonGroup>
+        {!carts[props.product.id] ? (
+          <Button
+            variant="contained"
+            fullWidth
+            size="large"
+            onClick={() => handleAddProduct(props.product.id)}
+          >
+            Add to cart
+          </Button>
+        ) : (
+          <ButtonGroup variant="contained" size="large" fullWidth>
+            <Button
+              endIcon={<RemoveIcon />}
+              onClick={() => handleRemoveProduct(props.product.id)}
+            ></Button>
+            <Button>{carts[props.product.id]}</Button>
+            <Button
+              startIcon={<AddIcon />}
+              onClick={() => handleAddProduct(props.product.id)}
+            ></Button>
+          </ButtonGroup>
+        )}
       </CardActions>
     </Card>
   );
