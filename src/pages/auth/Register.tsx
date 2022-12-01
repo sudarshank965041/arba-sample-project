@@ -110,7 +110,6 @@ export default function Register() {
   const handleLoginClick = async (e: any) => {
     const isValid = validateBeforeSubmit(e);
     if (isValid) {
-      console.log("Form Data : ", values);
       messagePopup("", "User created successfully", "success");
     }
   };

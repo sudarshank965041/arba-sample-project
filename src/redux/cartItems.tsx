@@ -17,30 +17,37 @@ export const removeFormCartStart = (data: any) => ({
   payload: data,
 });
 
-export const checkoutSuccess = (data: any) => ({
+export const checkoutSuccess = () => ({
   type: actionType.CHECKOUT_SUCCESS,
-  payload: data,
 });
+
+const localSavedCartItems: any = localStorage.getItem("carts")
+  ? localStorage.getItem("carts")
+  : "";
 
 // Reducer
 const INIT_STATE = {
-  carts: {},
-  totalItems: 0,
+  carts: localSavedCartItems ? JSON.parse(localSavedCartItems) : {},
 };
 
 export default function modifyCartListReducer(
   state = INIT_STATE,
   action = { type: "", payload: {} }
 ) {
-  const payload: any = action.payload;  
+  const payload: any = action.payload;
   const carts: any = state.carts;
   switch (action.type) {
     case actionType.CHECKOUT_SUCCESS:
-      return { ...state };
+      return { ...state, carts: {} };
     case actionType.ADD_TO_CART:
+      const newCartData = {
+        ...carts,
+        [payload.productId]: (carts[payload.productId] || 0) + 1,
+      };
+      localStorage.setItem("carts", JSON.stringify(newCartData));
       return {
         ...state,
-        carts: {...carts, [payload.productId]: (carts[payload.productId] || 0) + 1 },
+        carts: newCartData,
       };
     case actionType.REMOVE_FROM_CART:
       const qty = (carts[payload.productId] || 0) - 1;
@@ -50,7 +57,9 @@ export default function modifyCartListReducer(
       } else {
         delete copy[payload.productId];
       }
-      return { ...state, carts: copy };
+      const newData = { ...state, carts: copy };
+      localStorage.setItem("carts", JSON.stringify(newData));
+      return newData;
     default:
       return state;
   }

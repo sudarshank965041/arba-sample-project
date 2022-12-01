@@ -69,7 +69,6 @@ export function* getProductsListSaga(action: any): Generator {
       const finalValue = action.payload.limit
         ? response.slice(0, action.payload.limit)
         : response;
-      console.log("finalValue : ", finalValue);
       yield put(productsListSuccess(finalValue));
     } else {
       messagePopup("", "Products List failed", "error");

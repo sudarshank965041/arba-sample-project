@@ -40,6 +40,8 @@ export default function Header() {
         }
       }
       setTotal(count);
+    } else{
+      setTotal(0)
     }
   }, [carts]);
 
